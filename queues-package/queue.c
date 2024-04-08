@@ -38,7 +38,7 @@ queue_t *q_new()
 void q_free(queue_t *q)
 {
   list_ele_t *current_node;
-    if (q == NULL | q->head==NULL){
+    if (q == NULL || q->head==NULL){
       return;
     }
     // TODO free the queue nodes
@@ -133,7 +133,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
     // TODO update q->head to remove the current head from the queue
     q->head = q->head->next;
-    q->node_count-1;
+    q->node_count--;
     // TODO if the last list element was removed, the tail might need updating
     // TODO hey, did you forget to free the removed list element?
     return true;
@@ -144,7 +144,6 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
   Return 0 if q is NULL or empty
  */
 int q_size(queue_t *q){
-  int size=0;
     // TODO implement this function. If you add a field to queue_t
     // to keep track of the number of nodes in the queue, then this
     // function is fast-running and easy to write. But it also means
@@ -152,7 +151,7 @@ int q_size(queue_t *q){
     // of nodes elsewhere in your code.
 
     // TODO what if q == NULL or q->head == NULL?
-    if (q==NULL | q->head==NULL){
+    if (q==NULL || q->head==NULL){
       fprintf(stderr,"Something went wrong filling queue");
       return 0;
     }
