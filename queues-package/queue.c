@@ -25,13 +25,16 @@
 queue_t *q_new()
 {
   queue_t *q = malloc(sizeof(queue_t));
+  q->node_count = 0;
   // TODO check if malloc returned NULL (this means space could not be allocated)
-  if (malloc(sizeof(queue_t)) == NULL)
+  if (q == NULL)
   {
     fprintf(stderr, "Space could not be allocated");
     return NULL;
   }
   q->head = NULL;
+  q->tail = NULL;
+  q->node_count = 0;
   return q;
 }
 
@@ -39,6 +42,9 @@ queue_t *q_new()
 void q_free(queue_t *q)
 {
   list_ele_t *current_node;
+  list_ele_t *freed_node;
+  current_node = q->head;
+  freed_node = NULL;
   if (q == NULL || q->head == NULL)
   {
     return;
@@ -49,12 +55,14 @@ void q_free(queue_t *q)
    * starting at the head, freeing each node and its value.
    *
    * Account for an empty list (head is NULL). */
-  while (q->head != NULL)
+  while (current_node->next != NULL)
   {
-    // not sure if this is right
-    current_node = q->head->next;
-    free(current_node);
     free(current_node->value);
+    freed_node = current_node;
+    current_node = current_node->next;
+    freed_node->next = NULL;
+    free(freed_node);
+    q->node_count--;
   }
   // Freeing queue structure itself
   free(q);
@@ -100,7 +108,8 @@ bool q_insert_head(queue_t *q, char *s)
 
   // TODO if the list was empty, the tail might also need updating, however it
   // is you're implementing the notion of tail.
-
+  // increments node count
+  q->node_count++;
   return true;
 }
 
@@ -120,6 +129,13 @@ bool q_insert_tail(queue_t *q, char *s)
   // the tail efficiently.
   // TODO If the list was empty, the head might also need updating
   return false;
+  // TODO implement in similar fashion to q_insert_head
+  // You'll certainly want to add a field to queue_t so we can access
+  // the tail efficiently.
+  // TODO If the list was empty, the head might also need updating
+  // increment node count
+  q->node_count++;
+  return false;
 }
 
 /*
@@ -133,6 +149,17 @@ bool q_insert_tail(queue_t *q, char *s)
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
   // TODO check if q is NULL or empty
+  if (q == NULL || q->head == NULL)
+  {
+    return false;
+  }
+  list_ele_t *removed_head;
+  if (sp != NULL)
+  {
+    strncpy(sp, q->head->value, bufsize - 1);
+    sp[bufsize - 1] = '\0';
+  }
+  removed_head = q->head;
   // TODO if sp is not NULL, copy value at the head to sp
   // Use strncpy (http://www.cplusplus.com/reference/cstring/strncpy/)
   // bufsize is the number of characters already allocated for sp
@@ -145,6 +172,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
   // TODO update q->head to remove the current head from the queue
   q->head = q->head->next;
+  free(removed_head->value);
+  removed_head->next = NULL;
+  free(removed_head);
   q->node_count--;
   // TODO if the last list element was removed, the tail might need updating
   // TODO hey, did you forget to free the removed list element?
@@ -181,5 +211,21 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-  // TODO good luck! this is fun when it works
+  if (q == NULL || q->head == NULL)
+  {
+    return;
+  }
+  list_ele_t *current_node = q->head;
+  list_ele_t *next_node = q->head;
+  list_ele_t *previous_node = NULL;
+  while (next_node != NULL)
+  {
+    current_node->next = previous_node;
+    previous_node = current_node;
+    current_node = next_node;
+    next_node = next_node->next;
+  }
+  current_node->next = previous_node;
+  q->head = current_node;
+  q->tail = q->head;
 }
