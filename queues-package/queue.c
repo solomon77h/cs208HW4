@@ -1,9 +1,8 @@
-/*
+/* Ella Visconti and Helana Solomon
  * Starter file for CS 208 assignment: Queues in C
  * Adapted by Aaron Bauer and then Jeff Ondich
  * from a lab developed at CMU by R. E. Bryant, 2017-2018
  */
-
 /*
  * This program implements a queue supporting both FIFO and LIFO
  * operations.
@@ -26,7 +25,6 @@ queue_t *q_new()
 {
     queue_t *q =  malloc(sizeof(queue_t));
     q->node_count=0;
-    // TODO check if malloc returned NULL (this means space could not be allocated)
     if (q==NULL){
       fprintf(stderr, "Space could not be allocated");
       return NULL;
@@ -37,7 +35,8 @@ queue_t *q_new()
     return q;
 }
 
-/* Free all storage used by queue */
+/* Free all storage used by queue by looping through list nodes
+starting at the head, freeing each node and its value. */
 void q_free(queue_t *q)
 {
   list_ele_t *current_node;
@@ -47,12 +46,6 @@ void q_free(queue_t *q)
     if (q == NULL|| q->head==NULL){
       return;
     }
-    // TODO free the queue nodes
-
-    /* You'll want to loop through the list nodes until the next pointer is NULL,
-     * starting at the head, freeing each node and its value. 
-     * 
-     * Account for an empty list (head is NULL). */
     while (current_node->next!=NULL){
       free(current_node->value);
       freed_node=current_node;
@@ -61,7 +54,6 @@ void q_free(queue_t *q)
       free(freed_node);
       q->node_count--;
     }
-    // Freeing queue structure itself
     free(q);
 }
 
@@ -178,11 +170,9 @@ int q_size(queue_t *q){
 }
 
 /*
-  Reverse elements in queue
+  Reverse elements in queue by switching
+  current node, previous node, and next node
   No effect if q is NULL or empty
-  This function should not allocate or free any list elements
-  (e.g., by calling q_insert_head, q_insert_tail, or q_remove_head).
-  It should rearrange the existing ones.
  */
 void q_reverse(queue_t *q)
 {
@@ -192,6 +182,7 @@ void q_reverse(queue_t *q)
   list_ele_t *current_node=q->head;
   list_ele_t *next_node= q->head;
   list_ele_t *previous_node=NULL;
+  
   while (next_node!=NULL){
     current_node->next=previous_node;
     previous_node=current_node;
