@@ -79,25 +79,28 @@ bool q_insert_head(queue_t *q, char *s)
 {
   list_ele_t *new_node;
   // TODO check if q is NULL; what should you do if so?
-  if (q == NULL || q->head == NULL)
-  {
-    return false;
-  }
+
   // TODO Create a new node, copy the string s into its value.
 
   new_node = malloc(sizeof(list_ele_t)); // allocates space on a the heap for the new node
-  strcopy(new_node, s);
-  // increments node count
-  q->node_count++;
+
   // TODO check if malloc returned NULL
-  if (malloc(sizeof(list_ele_t)) == NULL)
+  if (new_node == NULL)
   {
-    fprintf(stderr, "Error: Space allocation was unsucessful");
-    return NULL;
+    printf("Error malloc\n");
+
+    return false;
   }
-  // TODO use malloc to allocate space for the value and copy s to value
-  // If this second malloc call returns NULL, you need to free new_node before returning
-  // new_node->value = malloc(sizeof(list_ele_t))
+  new_node->value = malloc(sizeof(list_ele_t));
+  new_node->value = s;
+  if (new_node->value == NULL)
+  {
+    printf("Error malloc\n");
+    free(new_node);
+
+    return false;
+  }
+
   // TODO Hey wait a second. Aren't we also gonna do q_insert_tail? Should
   // we maybe write a utility function to allocate and return a new node so
   // we can reuse it there?
@@ -109,7 +112,12 @@ bool q_insert_head(queue_t *q, char *s)
   // TODO if the list was empty, the tail might also need updating, however it
   // is you're implementing the notion of tail.
   // increments node count
+  if (q->head == NULL)
+  {
+    q->head = new_node;
+  }
   q->node_count++;
+
   return true;
 }
 
@@ -122,18 +130,31 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-  // increment node count
-  q->node_count++;
-  // TODO implement in similar fashion to q_insert_head
-  // You'll certainly want to add a field to queue_t so we can access
-  // the tail efficiently.
-  // TODO If the list was empty, the head might also need updating
-  return false;
-  // TODO implement in similar fashion to q_insert_head
-  // You'll certainly want to add a field to queue_t so we can access
-  // the tail efficiently.
-  // TODO If the list was empty, the head might also need updating
-  // increment node count
+  if (q == NULL)
+  {
+    printf("Error malloc\n");
+    return false;
+  }
+
+  list_ele_t *another_new_node;
+  another_new_node = malloc(sizeof(list_ele_t));
+
+  if (another_new_node == NULL)
+  {
+    printf("Error malloc\n");
+    free(another_new_node);
+    return false;
+  }
+  another_new_node->value = s;
+  another_new_node->next = NULL;
+
+  q->tail = another_new_node;
+
+  //  TODO implement in similar fashion to q_insert_head
+  //  You'll certainly want to add a field to queue_t so we can access
+  //  the tail efficiently.
+  //  TODO If the list was empty, the head might also need updating
+  //  increment node count
   q->node_count++;
   return false;
 }
