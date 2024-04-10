@@ -219,16 +219,20 @@ void q_reverse(queue_t *q)
     return;
   }
   list_ele_t *current_node = q->head;
-  list_ele_t *next_node = q->head;
-  list_ele_t *previous_node = NULL;
-  while (next_node != NULL)
-  {
-    current_node->next = previous_node;
-    previous_node = current_node;
-    current_node = next_node;
-    next_node = next_node->next;
+  list_ele_t *next_node=q->head;
+  list_ele_t *previous_node=NULL;
+  if (q->node_count==1){
+    return;
   }
-  current_node->next = previous_node;
-  q->head = current_node;
+  while (next_node != NULL && q->node_count!=1)
+  {
+    next_node = current_node->next;
+    current_node->next=previous_node;
+    previous_node = current_node;
+    current_node=next_node;
+    next_node=next_node->next;
+  }
+  current_node->next=previous_node;
   q->tail = q->head;
+  q->head = current_node;
 }
