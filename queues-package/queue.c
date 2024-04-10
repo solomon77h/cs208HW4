@@ -25,7 +25,6 @@ queue_t *q_new()
 {
   queue_t *q = malloc(sizeof(queue_t));
   q->node_count = 0;
-  // TODO check if malloc returned NULL (this means space could not be allocated)
   if (q == NULL)
   {
     fprintf(stderr, "Space could not be allocated");
@@ -41,20 +40,14 @@ queue_t *q_new()
 starting at the head, freeing each node and its value. */
 void q_free(queue_t *q)
 {
-  list_ele_t *current_node;
-  list_ele_t *freed_node;
-  current_node = q->head;
-  freed_node = NULL;
   if (q == NULL || q->head == NULL)
   {
     return;
   }
-  // TODO free the queue nodes
-
-  /* You'll want to loop through the list nodes until the next pointer is NULL,
-   * starting at the head, freeing each node and its value.
-   *
-   * Account for an empty list (head is NULL). */
+  list_ele_t *current_node;
+  list_ele_t *freed_node;
+  current_node = q->head;
+  freed_node = NULL;
   while (current_node->next != NULL)
   {
     free(current_node->value);
@@ -64,7 +57,6 @@ void q_free(queue_t *q)
     free(freed_node);
     q->node_count--;
   }
-  // Freeing queue structure itself
   free(q);
 }
 
@@ -77,44 +69,40 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
+   if (q==NULL){
+    fprintf(stderr, "queue is null");
+    return false;
+  }
   list_ele_t *new_node;
-  // TODO check if q is NULL; what should you do if so?
 
   // TODO Create a new node, copy the string s into its value.
 
   new_node = malloc(sizeof(list_ele_t)); // allocates space on a the heap for the new node
 
-  // TODO check if malloc returned NULL
   if (new_node == NULL)
   {
-    printf("Error malloc\n");
-
+    fprintf(stderr,"Error malloc\n");
     return false;
   }
-  new_node->value = malloc(sizeof(list_ele_t));
-  new_node->value = s;
+  new_node->value = malloc(sizeof(char)*(strlen(s)+1));
   if (new_node->value == NULL)
   {
-    printf("Error malloc\n");
+    fprintf(stderr,"Error malloc\n");
     free(new_node);
-
     return false;
   }
+  strcpy(new_node->value,s);
+  new_node->next=NULL;
 
   // TODO Hey wait a second. Aren't we also gonna do q_insert_tail? Should
   // we maybe write a utility function to allocate and return a new node so
   // we can reuse it there?
 
-  // Connect the new node to the front of the queue.
   new_node->next = q->head;
   q->head = new_node;
-
-  // TODO if the list was empty, the tail might also need updating, however it
-  // is you're implementing the notion of tail.
-  // increments node count
   if (q->head == NULL)
   {
-    q->head = new_node;
+    q->tail = new_node;
   }
   q->node_count++;
 
@@ -132,31 +120,37 @@ bool q_insert_tail(queue_t *q, char *s)
 {
   if (q == NULL)
   {
-    printf("Error malloc\n");
+    fprintf(stderr,"queue is null\n");
     return false;
   }
 
-  list_ele_t *another_new_node;
-  another_new_node = malloc(sizeof(list_ele_t));
+  list_ele_t *new_node;
+  new_node = malloc(sizeof(list_ele_t));
 
-  if (another_new_node == NULL)
+  if (new_node == NULL)
   {
-    printf("Error malloc\n");
-    free(another_new_node);
+    fprintf(stderr,"Error malloc\n");
     return false;
   }
-  another_new_node->value = s;
-  another_new_node->next = NULL;
+  new_node->value = malloc(sizeof(char)*(strlen(s)+1));
+  if (new_node->value == NULL)
+  {
+    fprintf(stderr,"Error malloc\n");
+    free(new_node);
+    return false;
+  }
+  strcpy(new_node->value, s);
+  new_node->next = NULL;
 
-  q->tail = another_new_node;
-
-  //  TODO implement in similar fashion to q_insert_head
-  //  You'll certainly want to add a field to queue_t so we can access
-  //  the tail efficiently.
-  //  TODO If the list was empty, the head might also need updating
-  //  increment node count
+  if (q->tail==NULL){
+    q->tail=new_node;
+  }
+  else{
+    q->tail->next=new_node;
+  }
+  q->tail = new_node;
   q->node_count++;
-  return false;
+  return true;
 }
 
 /*
@@ -169,7 +163,6 @@ bool q_insert_tail(queue_t *q, char *s)
 */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-  // TODO check if q is NULL or empty
   if (q == NULL || q->head == NULL)
   {
     return false;
@@ -181,8 +174,6 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     sp[bufsize - 1] = '\0';
   }
   removed_head = q->head;
-  // TODO if sp is not NULL, copy value at the head to sp
-  // Use strncpy (http://www.cplusplus.com/reference/cstring/strncpy/)
   // bufsize is the number of characters already allocated for sp
   // Think about:
   //    - what should happen if q->head->value is longer than bufsize?
@@ -208,13 +199,6 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-  // TODO implement this function. If you add a field to queue_t
-  // to keep track of the number of nodes in the queue, then this
-  // function is fast-running and easy to write. But it also means
-  // you have to be very careful about keeping track of the number
-  // of nodes elsewhere in your code.
-
-  // TODO what if q == NULL or q->head == NULL?
   if (q == NULL || q->head == NULL)
   {
     fprintf(stderr, "Something went wrong filling queue");
