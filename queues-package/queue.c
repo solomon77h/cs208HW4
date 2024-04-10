@@ -1,9 +1,8 @@
-/*
+/* Ella Visconti and Helana Solomon
  * Starter file for CS 208 assignment: Queues in C
  * Adapted by Aaron Bauer and then Jeff Ondich
  * from a lab developed at CMU by R. E. Bryant, 2017-2018
  */
-
 /*
  * This program implements a queue supporting both FIFO and LIFO
  * operations.
@@ -38,7 +37,8 @@ queue_t *q_new()
   return q;
 }
 
-/* Free all storage used by queue */
+/* Free all storage used by queue by looping through list nodes
+starting at the head, freeing each node and its value. */
 void q_free(queue_t *q)
 {
   list_ele_t *current_node;
@@ -224,11 +224,9 @@ int q_size(queue_t *q)
 }
 
 /*
-  Reverse elements in queue
+  Reverse elements in queue by switching
+  current node, previous node, and next node
   No effect if q is NULL or empty
-  This function should not allocate or free any list elements
-  (e.g., by calling q_insert_head, q_insert_tail, or q_remove_head).
-  It should rearrange the existing ones.
  */
 void q_reverse(queue_t *q)
 {
