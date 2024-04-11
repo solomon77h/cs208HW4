@@ -57,6 +57,8 @@ void q_free(queue_t *q)
     free(freed_node);
     q->node_count--;
   }
+  free(current_node->value);
+  free(current_node);
   free(q);
 }
 
