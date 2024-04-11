@@ -36,7 +36,9 @@ queue_t *q_new()
   return q;
 }
 
-/* Free all storage used by queue by looping through list nodes
+/*
+param 1: queue struct, q
+Free all storage used by queue by looping through list nodes
 starting at the head, freeing each node and its value. */
 void q_free(queue_t *q)
 {
@@ -61,11 +63,12 @@ void q_free(queue_t *q)
 }
 
 /*
-  Attempt to insert element at head of queue.
+  param 1: (struct) pointed to the queue,
+  param 2: (string ) points to the string to be stored
+  Function inserts element(string) into the queue at the head.
   Return true if successful.
   Return false if q is NULL or could not allocate space.
-  Argument s points to the string to be stored.
-  The function must explicitly allocate space and copy the string into it.
+
  */
 bool q_insert_head(queue_t *q, char *s)
 {
@@ -76,15 +79,13 @@ bool q_insert_head(queue_t *q, char *s)
   }
   list_ele_t *new_node;
 
-  // TODO Create a new node, copy the string s into its value.
-
   new_node = malloc(sizeof(list_ele_t)); // allocates space on a the heap for the new node
-
   if (new_node == NULL)
   {
     fprintf(stderr, "Error malloc\n");
     return false;
   }
+
   new_node->value = malloc(sizeof(char) * (strlen(s) + 1));
   if (new_node->value == NULL)
   {
@@ -92,13 +93,11 @@ bool q_insert_head(queue_t *q, char *s)
     free(new_node);
     return false;
   }
+
   strcpy(new_node->value, s);
   new_node->next = NULL;
 
-  // TODO Hey wait a second. Aren't we also gonna do q_insert_tail? Should
-  // we maybe write a utility function to allocate and return a new node so
-  // we can reuse it there?
-
+  // makes the new_node the head
   new_node->next = q->head;
   q->head = new_node;
 
@@ -113,11 +112,12 @@ bool q_insert_head(queue_t *q, char *s)
 }
 
 /*
-  Attempt to insert element at tail of queue.
+  param 1: (struct) pointed to the queue,
+  param 2: (string ) points to the string to be stored
+  Functions inserts element(string) at the tail of the queue
   Return true if successful.
   Return false if q is NULL or could not allocate space.
-  Argument s points to the string to be stored.
-  The function must explicitly allocate space and copy the string into it.
+
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
@@ -135,6 +135,7 @@ bool q_insert_tail(queue_t *q, char *s)
     fprintf(stderr, "Error malloc\n");
     return false;
   }
+
   another_new_node->value = malloc(sizeof(char) * (strlen(s) + 1));
   if (another_new_node->value == NULL)
   {
@@ -142,12 +143,13 @@ bool q_insert_tail(queue_t *q, char *s)
     free(another_new_node);
     return false;
   }
+  // copy string into the node value
   strcpy(another_new_node->value, s);
   another_new_node->next = NULL;
 
+  // adding another_new_node into the queue
   if (q->tail == NULL)
   {
-
     q->tail = another_new_node;
   }
   else
@@ -162,12 +164,13 @@ bool q_insert_tail(queue_t *q, char *s)
 }
 
 /*
-  Attempt to remove element from head of queue.
+  param 1: (struct) queue
+  param 2: (string) variable that holds the removed string
+  param 3: (unsigned long size_t) buffer
+  Removes element from the head of queue.
   Return true if successful.
   Return false if queue is NULL or empty.
-  If sp is non-NULL and an element is removed, copy the removed string to *sp
-  (up to a maximum of bufsize-1 characters, plus a null terminator.)
-  The space used by the list element and the string should be freed.
+
 */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
@@ -181,16 +184,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     strncpy(sp, q->head->value, bufsize - 1);
     sp[bufsize - 1] = '\0';
   }
-  removed_head = q->head;
-  // bufsize is the number of characters already allocated for sp
-  // Think about:
-  //    - what should happen if q->head->value is longer than bufsize?
-  //    - what should happen if bufsize == 0?
-  //    - under what conditions will strncpy copy the \0 character
-  //        into sp, and when will it fail to do so (so you'll have
-  //        to insert a \0 manually)?
 
-  // TODO update q->head to remove the current head from the queue
+  // removing head
+  removed_head = q->head;
   q->head = q->head->next;
   free(removed_head->value);
   removed_head->next = NULL;
@@ -202,6 +198,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 }
 
 /*
+  param:(queue) struct
   Return number of elements in queue.
   Return 0 if q is NULL or empty
  */
@@ -216,6 +213,7 @@ int q_size(queue_t *q)
 }
 
 /*
+  param: struct (queue)
   Reverse elements in queue by switching
   current node, previous node, and next node
   No effect if q is NULL or empty
@@ -226,9 +224,11 @@ void q_reverse(queue_t *q)
   {
     return;
   }
+
   list_ele_t *current_node = q->head;
   list_ele_t *next_node = q->head;
   list_ele_t *previous_node = NULL;
+  // reversing the queue
   if (q->node_count == 1)
   {
     return;
