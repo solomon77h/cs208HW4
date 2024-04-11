@@ -69,7 +69,8 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
-   if (q==NULL){
+  if (q == NULL)
+  {
     fprintf(stderr, "queue is null");
     return false;
   }
@@ -81,18 +82,18 @@ bool q_insert_head(queue_t *q, char *s)
 
   if (new_node == NULL)
   {
-    fprintf(stderr,"Error malloc\n");
+    fprintf(stderr, "Error malloc\n");
     return false;
   }
-  new_node->value = malloc(sizeof(char)*(strlen(s)+1));
+  new_node->value = malloc(sizeof(char) * (strlen(s) + 1));
   if (new_node->value == NULL)
   {
-    fprintf(stderr,"Error malloc\n");
+    fprintf(stderr, "Error malloc\n");
     free(new_node);
     return false;
   }
-  strcpy(new_node->value,s);
-  new_node->next=NULL;
+  strcpy(new_node->value, s);
+  new_node->next = NULL;
 
   // TODO Hey wait a second. Aren't we also gonna do q_insert_tail? Should
   // we maybe write a utility function to allocate and return a new node so
@@ -100,8 +101,10 @@ bool q_insert_head(queue_t *q, char *s)
 
   new_node->next = q->head;
   q->head = new_node;
-  if (q->head == NULL)
+
+  if (q->tail == NULL)
   {
+
     q->tail = new_node;
   }
   q->node_count++;
@@ -120,35 +123,40 @@ bool q_insert_tail(queue_t *q, char *s)
 {
   if (q == NULL)
   {
-    fprintf(stderr,"queue is null\n");
+    fprintf(stderr, "queue is null\n");
     return false;
   }
 
-  list_ele_t *new_node;
-  new_node = malloc(sizeof(list_ele_t));
+  list_ele_t *another_new_node;
+  another_new_node = malloc(sizeof(list_ele_t));
 
-  if (new_node == NULL)
+  if (another_new_node == NULL)
   {
-    fprintf(stderr,"Error malloc\n");
+    fprintf(stderr, "Error malloc\n");
     return false;
   }
-  new_node->value = malloc(sizeof(char)*(strlen(s)+1));
-  if (new_node->value == NULL)
+  another_new_node->value = malloc(sizeof(char) * (strlen(s) + 1));
+  if (another_new_node->value == NULL)
   {
-    fprintf(stderr,"Error malloc\n");
-    free(new_node);
+    fprintf(stderr, "Error malloc\n");
+    free(another_new_node);
     return false;
   }
-  strcpy(new_node->value, s);
-  new_node->next = NULL;
+  strcpy(another_new_node->value, s);
+  another_new_node->next = NULL;
 
-  if (q->tail==NULL){
-    q->tail=new_node;
+  if (q->tail == NULL)
+  {
+
+    q->tail = another_new_node;
   }
-  else{
-    q->tail->next=new_node;
+  else
+  {
+    q->tail->next = another_new_node;
+    q->tail = another_new_node;
+    q->tail->next = NULL;
   }
-  q->tail = new_node;
+
   q->node_count++;
   return true;
 }
@@ -219,20 +227,21 @@ void q_reverse(queue_t *q)
     return;
   }
   list_ele_t *current_node = q->head;
-  list_ele_t *next_node=q->head;
-  list_ele_t *previous_node=NULL;
-  if (q->node_count==1){
+  list_ele_t *next_node = q->head;
+  list_ele_t *previous_node = NULL;
+  if (q->node_count == 1)
+  {
     return;
   }
-  while (next_node != NULL && q->node_count!=1)
+  while (next_node != NULL && q->node_count != 1)
   {
     next_node = current_node->next;
-    current_node->next=previous_node;
+    current_node->next = previous_node;
     previous_node = current_node;
-    current_node=next_node;
-    next_node=next_node->next;
+    current_node = next_node;
+    next_node = next_node->next;
   }
-  current_node->next=previous_node;
+  current_node->next = previous_node;
   q->tail = q->head;
   q->head = current_node;
 }
