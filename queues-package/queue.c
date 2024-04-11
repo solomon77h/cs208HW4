@@ -59,6 +59,8 @@ void q_free(queue_t *q)
     free(freed_node);
     q->node_count--;
   }
+  free(current_node->value);
+  free(current_node);
   free(q);
 }
 
@@ -112,12 +114,11 @@ bool q_insert_head(queue_t *q, char *s)
 }
 
 /*
-  param 1: (struct) pointed to the queue,
+  param 1: (struct) pointed to the queue
   param 2: (string ) points to the string to be stored
-  Functions inserts element(string) at the tail of the queue
+  Functions inserts element(string) at the tail of the queue.
   Return true if successful.
   Return false if q is NULL or could not allocate space.
-
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
@@ -215,8 +216,8 @@ int q_size(queue_t *q)
 /*
   param: struct (queue)
   Reverse elements in queue by switching
-  current node, previous node, and next node
-  No effect if q is NULL or empty
+  current node, previous node, and next node.
+  No effect if q is NULL or empty.
  */
 void q_reverse(queue_t *q)
 {
